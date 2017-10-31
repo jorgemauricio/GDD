@@ -147,5 +147,5 @@ def metodoSenoSimple(tmax, tmin):
 	return gdd
 
 #%% name main function
-if __name__ = "__main__":
+if __name__ == "__main__":
 	main()
