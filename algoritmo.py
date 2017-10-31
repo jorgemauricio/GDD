@@ -19,9 +19,9 @@ import numpy as np
 def metodoResidual(tmax, tmin, tbase):
 	'''
 	Genera los GDD por medio del Método Residual
-	tmax: temperatura máxima
-	tmin: temperatura mínima
-	tbase: temperatura base del cultivo
+	param: tmax: temperatura máxima
+	param: tmin: temperatura mínima
+	param: tbase: temperatura base del cultivo
 	'''
 	if (tmax > umbralSuperior):
 		tmax = umbralSuperior
@@ -39,6 +39,11 @@ def metodoResidual(tmax, tmin, tbase):
 
 # 	Metodo triangulo simple
 def metodoTrianguloSimple(tmax, tmin):
+	'''
+	Genera los GDD por medio del Método Triángulo Simple
+	param: tmax: temperatura máxima
+	param: tmin: temperatura mínima
+	'''
 	gdd = 0.0
 	if (tmin > umbralSuperior and tmax > umbralSuperior):
 		gdd = umbralSuperior - umbralInferior
@@ -65,6 +70,12 @@ def metodoTrianguloSimple(tmax, tmin):
 
 # 	Subrutina para metodo del seno simple
 def sinec(suma, diff, temp1):
+	'''
+	Genera los GDD de acuerdo al comportamiento del ángulo
+	param: suma:
+	param: diff:
+	param: temp1:
+	'''
 	twopi = 6.2834
 	pihlf = 1.5708
 	d2 = temp1 - suma
@@ -78,6 +89,11 @@ def sinec(suma, diff, temp1):
 	return heat
 
 def metodoSenoSimple(tmax, tmin):
+	'''
+	Genera los GDD por medio del Método Seno Simple
+	param: tmax: temperatura máxima
+	param: tmin: temperatura mínima
+	'''
 	gdd = 0.0
 	if (tmin > umbralSuperior):
 		gdd = umbralSuperior - umbralInferior
@@ -127,7 +143,6 @@ gddTD = 0.0
 gddSS = 0.0
 
 #	validacion de umbrales
-
 if (umbralSuperior >= umbralInferior):
 	data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase), axis=1)
 	data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin']), axis=1)
