@@ -1,6 +1,6 @@
 # GDD
 
-Algoritmo para el calculo de grados días de desarrollo
+Algoritmo para el cálculo de grados días de desarrollo
 
 ## Descripción
 El algortimo es capaz de calcular los grados días de desarrollo mediante los métodos:
