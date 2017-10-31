@@ -7,7 +7,7 @@ This program calculate the Degrees Days of a database file.
 
 """
 
-### Library
+### Librerias
 import math
 import pandas as pd
 import numpy as np
@@ -15,45 +15,58 @@ import numpy as np
 
 #%% Main Function
 def main():
+
 	#%% Leer archivo .csv
-	data = pd.read_csv('data/datos.csv')
+	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\n")
+	nombreDelArchivo = "data/{}".format(nombre)
+	data = pd.read_csv(nombreDelArchivo)
 
-	#%% desplegar el menú
-	print ("*************************************************************")
-	print ("*****      Programa para calcular grados-dias en Python *****")
-	print ("*****      Metodos:                                     *****")
-	print ("*****      + Residual                                   *****")
-	print ("*****      + Triangulo Simple                           *****")
-	print ("*****      + Metodo Seno Simple                         *****")
-	print ("*************************************************************")
+	#%% validar datos
+	variableTmax = 'tmax'
+	variableTmin = 'tmin'
 
-	#%% preguntar al usuario los límites
-	umbralInferiorText = input("Introduce el umbral inferior: ")
-	umbralSuperiorText = input("Introduce el umbral superior: ")
-	tbaseText = input("Introduce la temperatura base: ")
-	umbralSuperior = float(umbralSuperiorText)
-	umbralInferior = float(umbralInferiorText)
-	tbase = int(tbaseText)
+	if variableTmax in data.columns and variableTmin in data.columns:
+		#%% desplegar el menú
+		print ("*************************************************************")
+		print ("*****      Programa para calcular grados-días en Python *****")
+		print ("*****      Métodos:                                     *****")
+		print ("*****      + Residual                                   *****")
+		print ("*****      + Triángulo Simple                           *****")
+		print ("*****      + Seno Simple                                *****")
+		print ("*************************************************************")
 
-	#%%	validacion de umbrales
-	if (umbralSuperior >= umbralInferior):
-		data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase), axis=1)
-		data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin']), axis=1)
-		data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row['tmax'], row['tmin']), axis=1)
-		data.to_csv('data/datos_procesados.csv', sep=',')
+		#%% preguntar al usuario los límites
+		umbralInferiorText = input("Introduce el umbral inferior: ")
+		umbralSuperiorText = input("Introduce el umbral superior: ")
+		uSuperior = float(umbralSuperiorText)
+		uInferior = float(umbralInferiorText)
+
+		#%% validacion de umbrales
+		if (uSuperior >= uInferior):
+			tbaseText = input("Introduce la temperatura base: ")
+			tbase = int(tbaseText)
+			data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase, uSuperior, uInferior), axis=1)
+			data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin'], uSuperior, uInferior), axis=1)
+			data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row['tmax'], row['tmin'],  uSuperior, uInferior), axis=1)
+			nombreDelArchivoProcesado = "data/procesado_{}".format(nombre)
+			data.to_csv(nombreDelArchivoProcesado, sep=',')
+		else:
+			print ("Error \nLimite inferior mayor al superior")
 	else:
-		print ("Error \nLimite inferior mayor al superior")	
+		print("Error no se encontraron las columnas necesarias para la ejecución del algoritmo")
 
 ### Functions
 
 #	Metodo residual
 
-def metodoResidual(tmax, tmin, tbase):
+def metodoResidual(tmax, tmin, tbase, umbralSuperior, umbralInferior):
 	'''
 	Genera los GDD por medio del Método Residual
 	param: tmax: temperatura máxima
 	param: tmin: temperatura mínima
 	param: tbase: temperatura base del cultivo
+	param: umbralSuperior : umbral superior
+	param: umbralInferior : umbral inferior
 	'''
 	if (tmax > umbralSuperior):
 		tmax = umbralSuperior
@@ -66,15 +79,18 @@ def metodoResidual(tmax, tmin, tbase):
 	gdd = ((tmax + tmin) / 2.0) - tbase
 
 	if (gdd < 0):
-		gdd = 0.0
-	return gdd
+		return 0.0
+	else:
+		return gdd
 
 # 	Metodo triangulo simple
-def metodoTrianguloSimple(tmax, tmin):
+def metodoTrianguloSimple(tmax, tmin, umbralSuperior, umbralInferior):
 	'''
 	Genera los GDD por medio del Método Triángulo Simple
 	param: tmax: temperatura máxima
 	param: tmin: temperatura mínima
+	param: umbralSuperior : umbral superior
+	param: umbralInferior : umbral inferior
 	'''
 	if (tmin > umbralSuperior and tmax > umbralSuperior):
 		return umbralSuperior - umbralInferior
@@ -119,11 +135,13 @@ def sinec(suma, diff, temp1):
 		theta = theta - 3.1416
 	return (diff * math.cos(theta) - d2 * (pihlf - theta)) / twopi
 
-def metodoSenoSimple(tmax, tmin):
+def metodoSenoSimple(tmax, tmin, umbralSuperior, umbralInferior):
 	'''
 	Genera los GDD por medio del Método Seno Simple
 	param: tmax: temperatura máxima
 	param: tmin: temperatura mínima
+	param: umbralSuperior : umbral superior
+	param: umbralInferior : umbral inferior
 	'''
 	gdd = 0.0
 	if (tmin > umbralSuperior):
