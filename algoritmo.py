@@ -44,27 +44,27 @@ def metodoTrianguloSimple(tmax, tmin):
 	param: tmax: temperatura máxima
 	param: tmin: temperatura mínima
 	'''
-	gdd = 0.0
 	if (tmin > umbralSuperior and tmax > umbralSuperior):
-		gdd = umbralSuperior - umbralInferior
+		return umbralSuperior - umbralInferior
 	elif (tmax < umbralInferior and tmin < umbralInferior):
-		gdd = 0.0
+		return 0.0
 	elif (tmin >= umbralInferior and tmax <= umbralSuperior):
-		gdd = ((6 * (tmax + tmin - 2.0 * umbralInferior)) / 12)
+		return ((6 * (tmax + tmin - 2.0 * umbralInferior)) / 12)
 	elif (tmin < umbralInferior and tmax > umbralSuperior):
 		dti = tmax - umbralInferior
 		dts = tmax - umbralSuperior
 		dt = tmax - tmin
-		gdd = ((6 * pow(dti, 2.0) / dt) - ((6 * pow(dts, 2.0)) / dt)) / 12
+		return ((6 * pow(dti, 2.0) / dt) - ((6 * pow(dts, 2.0)) / dt)) / 12
 	elif (tmin < umbralInferior and tmax > umbralInferior and tmax < umbralSuperior):
 		dti = tmax - umbralInferior
 		dt = tmax - tmin
-		gdd = ((6 * (pow(dti, 2.0)) / dt)) / 12
+		return ((6 * (pow(dti, 2.0)) / dt)) / 12
 	elif (tmin > umbralInferior and tmin < umbralSuperior and tmax > umbralSuperior):
 		dt = tmax - tmin
 		dts = tmax - umbralSuperior
-		gddTS = ((6 * (tmax + tmin - 2.0 * umbralInferior)) / 12) - (((6 * pow(dts, 2.0)) / dt) / 12)
-	return gdd
+		return ((6 * (tmax + tmin - 2.0 * umbralInferior)) / 12) - (((6 * pow(dts, 2.0)) / dt) / 12)
+	else:
+		return 0.0
 
 # 	Metodo seno simple
 
@@ -85,8 +85,7 @@ def sinec(suma, diff, temp1):
 	theta = math.atan2(d2, d5)
 	if (d2 < 0 and theta > 0):
 		theta = theta - 3.1416
-	heat = (diff * math.cos(theta) - d2 * (pihlf - theta)) / twopi
-	return heat
+	return (diff * math.cos(theta) - d2 * (pihlf - theta)) / twopi
 
 def metodoSenoSimple(tmax, tmin):
 	'''
@@ -96,10 +95,10 @@ def metodoSenoSimple(tmax, tmin):
 	'''
 	gdd = 0.0
 	if (tmin > umbralSuperior):
-		gdd = umbralSuperior - umbralInferior
+		return umbralSuperior - umbralInferior
 	else:
 		if (tmax <= umbralInferior):
-			gdd = 0.0
+			return 0.0
 		else:
 			temp1 = 2 * umbralInferior
 			diff = tmax - tmin
@@ -112,14 +111,13 @@ def metodoSenoSimple(tmax, tmin):
 				temp1 = 2 * umbralSuperior
 				gdd2 = gdd
 				gdd = sinec(suma, diff, temp1)
-				gdd = gdd2 - gdd
+				return gdd2 - gdd
 	return gdd
 
-# 	Leer archivo .csv
+#%% 	Leer archivo .csv
 data = pd.read_csv('data/datos.csv')
 
-# 	Solicitar al usuario los umbrales del cultivo
-
+#%% 	Desplegar el menú
 print ("*************************************************************")
 print ("*****      Programa para calcular grados-dias en Python *****")
 print ("*****      Metodos:                                     *****")
@@ -128,7 +126,7 @@ print ("*****      + Triangulo Simple                           *****")
 print ("*****      + Metodo Seno Simple                         *****")
 print ("*************************************************************")
 
-# 	limites
+# 	Preguntar al usuario los límites
 umbralInferiorText = input("Introduce el umbral inferior: ")
 umbralSuperiorText = input("Introduce el umbral superior: ")
 tbaseText = input("Introduce la temperatura base: ")
@@ -136,13 +134,13 @@ umbralSuperior = float(umbralSuperiorText)
 umbralInferior = float(umbralInferiorText)
 tbase = int(tbaseText)
 
-# 	variables
+#%% variables
 
 gddTS = 0.0
 gddTD = 0.0
 gddSS = 0.0
 
-#	validacion de umbrales
+#%%	validacion de umbrales
 if (umbralSuperior >= umbralInferior):
 	data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase), axis=1)
 	data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin']), axis=1)
