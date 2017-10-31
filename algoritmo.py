@@ -12,6 +12,38 @@ import math
 import pandas as pd
 import numpy as np
 
+
+#%% Main Function
+def main():
+	#%% Leer archivo .csv
+	data = pd.read_csv('data/datos.csv')
+
+	#%% desplegar el menú
+	print ("*************************************************************")
+	print ("*****      Programa para calcular grados-dias en Python *****")
+	print ("*****      Metodos:                                     *****")
+	print ("*****      + Residual                                   *****")
+	print ("*****      + Triangulo Simple                           *****")
+	print ("*****      + Metodo Seno Simple                         *****")
+	print ("*************************************************************")
+
+	#%% preguntar al usuario los límites
+	umbralInferiorText = input("Introduce el umbral inferior: ")
+	umbralSuperiorText = input("Introduce el umbral superior: ")
+	tbaseText = input("Introduce la temperatura base: ")
+	umbralSuperior = float(umbralSuperiorText)
+	umbralInferior = float(umbralInferiorText)
+	tbase = int(tbaseText)
+
+	#%%	validacion de umbrales
+	if (umbralSuperior >= umbralInferior):
+		data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase), axis=1)
+		data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin']), axis=1)
+		data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row['tmax'], row['tmin']), axis=1)
+		data.to_csv('data/datos_procesados.csv', sep=',')
+	else:
+		print ("Error \nLimite inferior mayor al superior")	
+
 ### Functions
 
 #	Metodo residual
@@ -114,37 +146,6 @@ def metodoSenoSimple(tmax, tmin):
 				return gdd2 - gdd
 	return gdd
 
-#%% 	Leer archivo .csv
-data = pd.read_csv('data/datos.csv')
-
-#%% 	Desplegar el menú
-print ("*************************************************************")
-print ("*****      Programa para calcular grados-dias en Python *****")
-print ("*****      Metodos:                                     *****")
-print ("*****      + Residual                                   *****")
-print ("*****      + Triangulo Simple                           *****")
-print ("*****      + Metodo Seno Simple                         *****")
-print ("*************************************************************")
-
-# 	Preguntar al usuario los límites
-umbralInferiorText = input("Introduce el umbral inferior: ")
-umbralSuperiorText = input("Introduce el umbral superior: ")
-tbaseText = input("Introduce la temperatura base: ")
-umbralSuperior = float(umbralSuperiorText)
-umbralInferior = float(umbralInferiorText)
-tbase = int(tbaseText)
-
-#%% variables
-
-gddTS = 0.0
-gddTD = 0.0
-gddSS = 0.0
-
-#%%	validacion de umbrales
-if (umbralSuperior >= umbralInferior):
-	data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase), axis=1)
-	data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin']), axis=1)
-	data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row['tmax'], row['tmin']), axis=1)
-	data.to_csv('data/datos_procesados.csv', sep=',')
-else:
-	print ("Error \nLimite inferior mayor al superior")	
+#%% name main function
+if __name__ = "__main__":
+	main()
