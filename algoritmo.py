@@ -17,6 +17,9 @@ import os
 #%% Main Function
 def main():
 
+	#%% limpiar pantalla de terminal
+	os.system("clear")
+	
 	#%% preguntar al usuario el nombre del archivo
 	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\n")
 	nombreDelArchivo = "data/{}".format(nombre)
