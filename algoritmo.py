@@ -17,13 +17,13 @@ import os
 #%% Main Function
 def main():
 
-	#%% Leer archivo .csv
+	#%% preguntar al usuario el nombre del archivo
 	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\n")
 	nombreDelArchivo = "data/{}".format(nombre)
-	
+
 	#%% validar si el archivo existe
 	if os.path.isfile(nombreDelArchivo):
-		#%% read csv
+		#%% leer .csv
 		data = pd.read_csv(nombreDelArchivo)
 
 		#%% validar datos
