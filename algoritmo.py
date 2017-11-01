@@ -33,6 +33,20 @@ def main():
 		variableTmax = 'tmax'
 		variableTmin = 'tmin'
 
+		#%% validar columnas
+		#%% tmax
+		while True:
+			if variableTmax in data.columns:
+				break
+			else:
+				variableTmax = input("Introduce el nombre de la columna donde se encuentran los datos de temperatura máxima: \n" )
+		#%% tmax
+		while True:
+			if variableTmin in data.columns:
+				break
+			else:
+				variableTmin = input("Introduce el nombre de la columna donde se encuentran los datos de temperatura mínima: \n")
+
 		if variableTmax in data.columns and variableTmin in data.columns:
 			#%% desplegar el menú
 			print ("*************************************************************")
@@ -53,11 +67,12 @@ def main():
 			if (uSuperior >= uInferior):
 				tbaseText = input("Introduce la temperatura base: ")
 				tbase = int(tbaseText)
-				data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase, uSuperior, uInferior), axis=1)
-				data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin'], uSuperior, uInferior), axis=1)
-				data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row['tmax'], row['tmin'],  uSuperior, uInferior), axis=1)
+				data['GDDR'] = data.apply(lambda row: metodoResidual(row[variableTmax], row[variableTmin], tbase, uSuperior, uInferior), axis=1)
+				data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row[variableTmax], row[variableTmin], uSuperior, uInferior), axis=1)
+				data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row[variableTmax], row[variableTmin],  uSuperior, uInferior), axis=1)
 				nombreDelArchivoProcesado = "data/procesado_{}".format(nombre)
 				data.to_csv(nombreDelArchivoProcesado, sep=',')
+				print("Procesamiento terminado...")
 			else:
 				print ("Error \nLimite inferior mayor al superior")
 		else:
