@@ -11,6 +11,7 @@ This program calculate the Degrees Days of a database file.
 import math
 import pandas as pd
 import numpy as np
+import os
 
 
 #%% Main Function
@@ -19,41 +20,47 @@ def main():
 	#%% Leer archivo .csv
 	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\n")
 	nombreDelArchivo = "data/{}".format(nombre)
-	data = pd.read_csv(nombreDelArchivo)
+	
+	#%% validar si el archivo existe
+	if os.path.isfile(nombreDelArchivo):
+		#%% read csv
+		data = pd.read_csv(nombreDelArchivo)
 
-	#%% validar datos
-	variableTmax = 'tmax'
-	variableTmin = 'tmin'
+		#%% validar datos
+		variableTmax = 'tmax'
+		variableTmin = 'tmin'
 
-	if variableTmax in data.columns and variableTmin in data.columns:
-		#%% desplegar el menú
-		print ("*************************************************************")
-		print ("*****      Programa para calcular grados-días en Python *****")
-		print ("*****      Métodos:                                     *****")
-		print ("*****      + Residual                                   *****")
-		print ("*****      + Triángulo Simple                           *****")
-		print ("*****      + Seno Simple                                *****")
-		print ("*************************************************************")
+		if variableTmax in data.columns and variableTmin in data.columns:
+			#%% desplegar el menú
+			print ("*************************************************************")
+			print ("*****      Programa para calcular grados-días en Python *****")
+			print ("*****      Métodos:                                     *****")
+			print ("*****      + Residual                                   *****")
+			print ("*****      + Triángulo Simple                           *****")
+			print ("*****      + Seno Simple                                *****")
+			print ("*************************************************************")
 
-		#%% preguntar al usuario los límites
-		umbralInferiorText = input("Introduce el umbral inferior: ")
-		umbralSuperiorText = input("Introduce el umbral superior: ")
-		uSuperior = float(umbralSuperiorText)
-		uInferior = float(umbralInferiorText)
+			#%% preguntar al usuario los límites
+			umbralInferiorText = input("Introduce el umbral inferior: ")
+			umbralSuperiorText = input("Introduce el umbral superior: ")
+			uSuperior = float(umbralSuperiorText)
+			uInferior = float(umbralInferiorText)
 
-		#%% validacion de umbrales
-		if (uSuperior >= uInferior):
-			tbaseText = input("Introduce la temperatura base: ")
-			tbase = int(tbaseText)
-			data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase, uSuperior, uInferior), axis=1)
-			data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin'], uSuperior, uInferior), axis=1)
-			data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row['tmax'], row['tmin'],  uSuperior, uInferior), axis=1)
-			nombreDelArchivoProcesado = "data/procesado_{}".format(nombre)
-			data.to_csv(nombreDelArchivoProcesado, sep=',')
+			#%% validacion de umbrales
+			if (uSuperior >= uInferior):
+				tbaseText = input("Introduce la temperatura base: ")
+				tbase = int(tbaseText)
+				data['GDDR'] = data.apply(lambda row: metodoResidual(row['tmax'], row['tmin'], tbase, uSuperior, uInferior), axis=1)
+				data['GDDTS'] = data.apply(lambda row: metodoTrianguloSimple(row['tmax'], row['tmin'], uSuperior, uInferior), axis=1)
+				data['GDDSS'] = data.apply(lambda row: metodoSenoSimple(row['tmax'], row['tmin'],  uSuperior, uInferior), axis=1)
+				nombreDelArchivoProcesado = "data/procesado_{}".format(nombre)
+				data.to_csv(nombreDelArchivoProcesado, sep=',')
+			else:
+				print ("Error \nLimite inferior mayor al superior")
 		else:
-			print ("Error \nLimite inferior mayor al superior")
+			print("Error no se encontraron las columnas necesarias para la ejecución del algoritmo")
 	else:
-		print("Error no se encontraron las columnas necesarias para la ejecución del algoritmo")
+		print('El archivo {}, no existe'.format(nombre))
 
 ### Functions
 
@@ -115,7 +122,6 @@ def metodoTrianguloSimple(tmax, tmin, umbralSuperior, umbralInferior):
 		return 0.0
 
 # 	Metodo seno simple
-
 # 	Subrutina para metodo del seno simple
 def sinec(suma, diff, temp1):
 	'''
