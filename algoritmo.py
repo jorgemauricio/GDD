@@ -21,10 +21,17 @@ def main():
 	os.system("clear")
 	
 	#%% preguntar al usuario el nombre del archivo
-	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\n")
+	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\nNombre = ")
 	nombreDelArchivo = "data/{}".format(nombre)
 
 	#%% validar si el archivo existe
+	while True:
+		if os.path.isfile(nombreDelArchivo):
+			break
+		else:
+			nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\nNombre = ")
+			nombreDelArchivo = "data/{}".format(nombre)
+
 	if os.path.isfile(nombreDelArchivo):
 		#%% leer .csv
 		data = pd.read_csv(nombreDelArchivo)
