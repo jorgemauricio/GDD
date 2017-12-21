@@ -21,12 +21,12 @@ def main():
 	os.system("clear")
 	
 	# obtener los archivos en la carpeta data
-	listaDeArchivos = [[x for x in os.listdir('data') if x.endswith('.csv')]]
+	listaDeArchivos = [x for x in os.listdir('data') if x.endswith('.csv')]
 
 	# mostrar lista de archivos
 	print("Lista de archivos en la carpeta data: ")
 	for t in listaDeArchivos:
-		print("{}\n".format(t))
+		print("{}".format(t))
 
 	# preguntar al usuario el nombre del archivo
 	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\n")
@@ -162,7 +162,7 @@ def sinec(suma, diff, temp1):
 	d2 = temp1 - suma
 	d3 = diff * diff
 	d4 = d2 * d2
-	d5 = math.sqrt(d3 - d4)
+	d5 = math.sqrt(abs(d3 - d4))
 	theta = math.atan2(d2, d5)
 	if (d2 < 0 and theta > 0):
 		theta = theta - 3.1416
