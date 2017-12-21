@@ -7,24 +7,33 @@ This program calculate the Degrees Days of a database file.
 
 """
 
-### Librerias
+# Librerias
 import math
 import pandas as pd
 import numpy as np
 import os
 
 
-#%% Main Function
+# Main Function
 def main():
 
-	#%% limpiar pantalla de terminal
+	# limpiar pantalla de terminal
 	os.system("clear")
 	
-	#%% preguntar al usuario el nombre del archivo
+	# obtener los archivos en la carpeta data
+	listaDeArchivos = [[x for x in os.listdir('data') if x.endswith('.csv')]]
+
+	# mostrar lista de archivos
+	print("Lista de archivos en la carpeta data: ")
+	for t in listaDeArchivos:
+		print("{}\n".format(t))
+
+	# preguntar al usuario el nombre del archivo
 	nombre = input("Ingresa el nombre del archivo a procesar:\n(Recuerda que tu archivo debe estar ubicado en la carpeta data)\n")
+	
 	nombreDelArchivo = "data/{}".format(nombre)
 
-	#%% validar si el archivo existe
+	# validar si el archivo existe
 	if os.path.isfile(nombreDelArchivo):
 		#%% leer .csv
 		data = pd.read_csv(nombreDelArchivo)
